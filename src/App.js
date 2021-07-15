@@ -1,19 +1,12 @@
 import './App.css';
-import { Canvas, useLoader } from '@react-three/fiber';
+import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import { Suspense } from 'react';
-import { OrbitControls } from '@react-three/drei';
-import { TextureLoader } from 'three';
+import { Environment, OrbitControls, useCubeTexture } from '@react-three/drei';
+import { CubeTextureLoader, TextureLoader } from 'three';
 
 function Scene() {
   const [jupiterMap] = useLoader(TextureLoader, ['RSStexture/JupiterColor.jpg'])
   const [ioMap, ioNormal] = useLoader(TextureLoader, ['RSStexture/IoColor.jpg', 'RSStexture/Io_NRM.jpg'])
-  // const [skybox] = useLoader(CubeTextureLoader, [
-  //   'skybox/PositiveX.png',
-  //   'skybox/NegativeX.png',
-  //   'skybox/PositiveY.png',
-  //   'skybox/NegativeY.png',
-  //   'skybox/PositiveZ.png',
-  //   'skybox/NegativeZ.png'])
 
   return (
     <>
@@ -31,6 +24,22 @@ function Scene() {
   )
 }
 
+function Skybox() {
+  const { scene } = useThree()
+  const loader = new CubeTextureLoader()
+  const texture = loader.load([
+    'skybox/PX.png',
+    'skybox/NX.png',
+    'skybox/PY.png',
+    'skybox/NY.png',
+    'skybox/PZ.png',
+    'skybox/NZ.png'
+  ])
+
+  scene.background = texture
+  return null
+}
+
 function App() {
 
   return (
@@ -38,7 +47,8 @@ function App() {
 
       <Canvas className='canvas'>
         <Suspense fallback={null}>
-          <OrbitControls rotation='auto'/>
+          <Skybox />
+          <OrbitControls autoRotate />
           <Scene />
         </Suspense>
       </Canvas>
